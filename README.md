@@ -50,3 +50,8 @@ receives the event as parameter.
 
 The method `update()` is performed about 1024 times a second, and
 receives the time delta in seconds since last performing as parameter.
+
+
+## Running the code
+
+Call the classmethod ``main()``.
