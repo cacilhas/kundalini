@@ -60,6 +60,7 @@ class FrameManager(metaclass=ABCMeta):
     def init(self) -> None:
         pygame.init()
         loop = self.loop = asyncio.get_event_loop()
+        self.screen # grant video mode has been set
         self.load()
         loop.call_soon(self._event_callback)
         loop.call_soon(self._update_callback, Clock())
