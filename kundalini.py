@@ -1,6 +1,5 @@
 import sys
 import traceback
-from time import monotonic as time
 from abc import ABCMeta, abstractmethod
 import asyncio
 import pygame
@@ -11,13 +10,14 @@ __all__ = ['FrameManager']
 EventLoop = asyncio.base_events.BaseEventLoop
 Event = pygame.event.Event
 Surface = pygame.surface.Surface
+Clock = pygame.time.Clock
 
 
 #-----------------------------------------------------------------------
 class FrameManager(metaclass=ABCMeta):
 
     DELAY = pow(2, -10)
-    FRAME_RATE = 1 / 60
+    FRAME_RATE = pow(60, -1)
     __screen = None
 
 
@@ -61,10 +61,9 @@ class FrameManager(metaclass=ABCMeta):
         pygame.init()
         loop = self.loop = asyncio.get_event_loop()
         self.load()
-        t = time()
         loop.call_soon(self._event_callback)
-        loop.call_soon(self._update_callback, t)
-        loop.call_soon(self._draw_callback, t)
+        loop.call_soon(self._update_callback, Clock())
+        loop.call_soon(self._draw_callback)
 
 
     def start(self) -> None:
@@ -104,20 +103,18 @@ class FrameManager(metaclass=ABCMeta):
         self.loop.call_later(self.DELAY, self._event_callback)
 
 
-    def _update_callback(self, last:float) -> None:
-        t = time()
+    def _update_callback(self, clock:Clock) -> None:
         try:
-            self.update(t - last)
+            self.update(clock.tick() / 1000)
 
         except:
             traceback.print_exc()
 
         else:
-            self.loop.call_later(self.DELAY, self._update_callback, t)
+            self.loop.call_later(self.DELAY, self._update_callback, clock)
 
 
-    def _draw_callback(self, last:float) -> None:
-        t = time()
+    def _draw_callback(self) -> None:
         try:
             self.draw()
             if self.screen.get_flags() & DOUBLEBUF:
@@ -129,7 +126,4 @@ class FrameManager(metaclass=ABCMeta):
             traceback.print_exc()
 
         else:
-            self.loop.call_later(
-                max(self.FRAME_RATE + last - t, 0),
-                self._draw_callback, t,
-            )
+            self.loop.call_later(self.FRAME_RATE, self._draw_callback)
