@@ -42,7 +42,7 @@ class FrameManager(metaclass=ABCMeta):
         pass
 
 
-    def update(self, delta:float) -> None:
+    def update(self, milliseconds:float) -> None:
         pass
 
 
@@ -105,7 +105,7 @@ class FrameManager(metaclass=ABCMeta):
 
     def _update_callback(self, clock:Clock) -> None:
         try:
-            self.update(clock.tick() / 1000)
+            self.update(milliseconds=clock.tick())
 
         except:
             traceback.print_exc()

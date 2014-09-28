@@ -227,7 +227,7 @@ class TestFrameManager(TestCase):
             game = Game()
             game.loop = Mock()
             game._update_callback(clock)
-            update.assert_called_once_with(.2)
+            update.assert_called_once_with(milliseconds=200)
             self.assertFalse(traceback.print_exc.called)
             game.loop.call_later.assert_called_once_with(
                 pow(2, -10), game._update_callback, clock,
@@ -249,7 +249,7 @@ class TestFrameManager(TestCase):
             game.loop = Mock()
             update.side_effect = ValueError
             game._update_callback(clock)
-            update.assert_called_once_with(.2)
+            update.assert_called_once_with(milliseconds=200)
             traceback.print_exc.assert_called_once_with()
             self.assertFalse(game.loop.call_later.called)
 

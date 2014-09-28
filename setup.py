@@ -12,7 +12,7 @@ else:
 
 setup(
     name             = 'kundalini',
-    version          = '0.1.1',
+    version          = '0.1.2',
     license          = 'BSD 3-Clausule License',
     platforms        = 'any',
     url              = 'https://bitbucket.org/cacilhas/kundalini',
