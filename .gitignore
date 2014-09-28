@@ -1,0 +1,15 @@
+*.bak
+*.pyc
+*.pyo
+*swo
+*swp
+*~
+.DS_Store
+.Python
+.cache
+.env
+Icon?
+__pycache__
+build
+dist
+tmp
