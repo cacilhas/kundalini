@@ -1,22 +1,23 @@
-#!/usr/bin/env python3
-from unittest import TestCase, main
+from unittest import TestCase
 from unittest.mock import Mock, call, patch
 from pygame.locals import *
 from kundalini import FrameManager
+
+__all__ = ['TestFrameManager']
 
 
 #-----------------------------------------------------------------------
 class TestFrameManager(TestCase):
 
-    @patch('kundalini.pygame', Mock())
-    @patch('kundalini.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame', Mock())
+    @patch('kundalini.frame_management.asyncio', Mock())
     def test_is_abstract_1(self):
         with self.assertRaises(TypeError):
             FrameManager()
 
 
-    @patch('kundalini.pygame', Mock())
-    @patch('kundalini.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame', Mock())
+    @patch('kundalini.frame_management.asyncio', Mock())
     def test_is_abstract_2(self):
         class Game(FrameManager):
             pass
@@ -25,8 +26,8 @@ class TestFrameManager(TestCase):
             Game()
 
 
-    @patch('kundalini.pygame', Mock())
-    @patch('kundalini.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame', Mock())
+    @patch('kundalini.frame_management.asyncio', Mock())
     def test_implemented(self):
         class Game(FrameManager):
             build_screen = lambda self: Mock()
@@ -34,8 +35,8 @@ class TestFrameManager(TestCase):
         Game()
 
 
-    @patch('kundalini.pygame', Mock())
-    @patch('kundalini.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame', Mock())
+    @patch('kundalini.frame_management.asyncio', Mock())
     def test_screen(self):
         screen = Mock()
 
@@ -46,8 +47,8 @@ class TestFrameManager(TestCase):
         self.assertEqual(game.screen, screen)
 
 
-    @patch('kundalini.pygame', Mock())
-    @patch('kundalini.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame', Mock())
+    @patch('kundalini.frame_management.asyncio', Mock())
     def test_retain_screen(self):
         class Game(FrameManager):
             build_screen = lambda self: Mock()
@@ -57,8 +58,8 @@ class TestFrameManager(TestCase):
         self.assertEqual(game.screen, screen)
 
 
-    @patch('kundalini.pygame', Mock())
-    @patch('kundalini.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame', Mock())
+    @patch('kundalini.frame_management.asyncio', Mock())
     def test_reset_1(self):
         class Game(FrameManager):
             build_screen = lambda self: Mock()
@@ -69,8 +70,8 @@ class TestFrameManager(TestCase):
         self.assertNotEqual(game.screen, screen)
 
 
-    @patch('kundalini.pygame', Mock())
-    @patch('kundalini.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame', Mock())
+    @patch('kundalini.frame_management.asyncio', Mock())
     def test_reset_2(self):
         class Game(FrameManager):
             build_screen = lambda self: Mock()
@@ -81,8 +82,8 @@ class TestFrameManager(TestCase):
         self.assertEqual(game.screen, screen)
 
 
-    @patch('kundalini.pygame')
-    @patch('kundalini.asyncio')
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.asyncio')
     def test_init(self, asyncio:Mock, pygame:Mock):
         loop = asyncio.get_event_loop.return_value
         clock = pygame.time.Clock.return_value
@@ -104,8 +105,8 @@ class TestFrameManager(TestCase):
         ], any_order=True)
 
 
-    @patch('kundalini.pygame')
-    @patch('kundalini.asyncio')
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.asyncio')
     def test_start(self, asyncio:Mock, pygame:Mock):
         loop = asyncio.get_event_loop.return_value
 
@@ -119,8 +120,8 @@ class TestFrameManager(TestCase):
         loop.close.assert_called_once_with()
 
 
-    @patch('kundalini.pygame')
-    @patch('kundalini.asyncio')
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.asyncio')
     def test_loop_error(self, asyncio:Mock, pygame:Mock):
         loop = asyncio.get_event_loop.return_value
         loop.run_forever.side_effect = ValueError
@@ -135,8 +136,8 @@ class TestFrameManager(TestCase):
         loop.close.assert_called_once_with()
 
 
-    @patch('kundalini.pygame', Mock())
-    @patch('kundalini.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame', Mock())
+    @patch('kundalini.frame_management.asyncio', Mock())
     def test_main(self):
         class Game(FrameManager):
             build_screen = lambda self: Mock()
@@ -147,9 +148,9 @@ class TestFrameManager(TestCase):
             start.assert_called_once_with()
 
 
-    @patch('kundalini.asyncio', Mock())
-    @patch('kundalini.pygame')
-    @patch('kundalini.traceback')
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
     def test_event_callback(self, traceback:Mock, pygame:Mock):
         class Game(FrameManager):
             build_screen = lambda self: Mock()
@@ -169,9 +170,9 @@ class TestFrameManager(TestCase):
             self.assertFalse(traceback.print_exc.called)
 
 
-    @patch('kundalini.asyncio', Mock())
-    @patch('kundalini.pygame')
-    @patch('kundalini.traceback')
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
     def test_event_quit(self, traceback:Mock, pygame:Mock):
         class Game(FrameManager):
             build_screen = lambda self: Mock()
@@ -190,9 +191,9 @@ class TestFrameManager(TestCase):
             self.assertFalse(traceback.print_exc.called)
 
 
-    @patch('kundalini.asyncio', Mock())
-    @patch('kundalini.pygame')
-    @patch('kundalini.traceback')
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
     def test_event_exception(self, traceback:Mock, pygame:Mock):
         class Game(FrameManager):
             build_screen = lambda self: Mock()
@@ -213,9 +214,9 @@ class TestFrameManager(TestCase):
             traceback.print_exc.assert_called_once_with()
 
 
-    @patch('kundalini.asyncio', Mock())
-    @patch('kundalini.pygame')
-    @patch('kundalini.traceback')
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
     def test_update_callback(self, traceback:Mock, pygame:Mock):
         clock = pygame.time.Clock.return_value
 
@@ -234,9 +235,9 @@ class TestFrameManager(TestCase):
             )
 
 
-    @patch('kundalini.asyncio', Mock())
-    @patch('kundalini.pygame')
-    @patch('kundalini.traceback')
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
     def test_update_exception(self, traceback:Mock, pygame:Mock):
         clock = pygame.time.Clock.return_value
 
@@ -254,9 +255,9 @@ class TestFrameManager(TestCase):
             self.assertFalse(game.loop.call_later.called)
 
 
-    @patch('kundalini.asyncio', Mock())
-    @patch('kundalini.pygame')
-    @patch('kundalini.traceback')
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
     def test_draw_callback(self, traceback:Mock, pygame:Mock):
         screen = Mock()
         screen.get_flags.return_value = 0
@@ -277,9 +278,9 @@ class TestFrameManager(TestCase):
             )
 
 
-    @patch('kundalini.asyncio', Mock())
-    @patch('kundalini.pygame')
-    @patch('kundalini.traceback')
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
     def test_draw_doublebuf(self, traceback:Mock, pygame:Mock):
         screen = Mock()
         screen.get_flags.return_value = DOUBLEBUF
@@ -300,9 +301,9 @@ class TestFrameManager(TestCase):
             )
 
 
-    @patch('kundalini.asyncio', Mock())
-    @patch('kundalini.pygame')
-    @patch('kundalini.traceback')
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
     def test_draw_exception(self, traceback:Mock, pygame:Mock):
         screen = Mock()
         screen.get_flags.return_value = 0
@@ -320,8 +321,3 @@ class TestFrameManager(TestCase):
             self.assertFalse(pygame.display.flip.called)
             self.assertFalse(game.loop.call_later.print_exc.called)
             traceback.print_exc.assert_called_once_with()
-
-
-#-----------------------------------------------------------------------
-if __name__ == '__main__':
-    main()
