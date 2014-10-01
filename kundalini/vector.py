@@ -32,13 +32,14 @@ class Vector(namedtuple('Vector', 'x y z w')):
         sin = self.w / mag
         angles.append(math.asin(sin))
 
-        return tuple(angles)
+        return tuple(map(math.degrees, angles))
 
 
     #---------------------------------------------------------------
     @classmethod
     def from_angles(cls, magnitude, *angles) -> namedtuple:
         angles += (0, 0, 0)
+        angles = tuple(map(math.radians, angles[:3]))
         x = math.cos(angles[0])
         y = math.sin(angles[0])
 

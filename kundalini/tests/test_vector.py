@@ -1,5 +1,4 @@
 from unittest import TestCase
-import math
 from kundalini import Vector
 
 __all__ = ['TestVector']
@@ -8,7 +7,7 @@ __all__ = ['TestVector']
 #-----------------------------------------------------------------------
 class TestVector(TestCase):
 
-    angle_345 = math.radians(53.13010235)
+    angle_345 = 53.13010235
 
 
     def test_simple_2d_vector(self):
