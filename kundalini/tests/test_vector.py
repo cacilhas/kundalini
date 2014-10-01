@@ -23,6 +23,14 @@ class TestVector(TestCase):
         self.assertEqual(vector.angles[1:], (0, 0))
 
 
+    def test_simple_2d_from_angle(self):
+        vector = Vector.from_angles(5, self.angle_345)
+        self.assertAlmostEqual(vector.x, 3, places=4)
+        self.assertAlmostEqual(vector.y, 4, places=4)
+        self.assertEqual(vector.z, 0)
+        self.assertEqual(vector.w, 0)
+
+
     def test_3d_vector(self):
         vector = Vector(3, 4, 4)
         self.assertEqual(vector, (3, 4, 4, 0))
@@ -36,6 +44,15 @@ class TestVector(TestCase):
         self.assertEqual(vector.angles[2], 0)
 
 
+    def test_3d_from_angle(self):
+        angle_345 = self.angle_345
+        vector = Vector.from_angles(6.4031, angle_345, angle_345)
+        self.assertAlmostEqual(vector.x, 3, places=4)
+        self.assertAlmostEqual(vector.y, 4, places=4)
+        self.assertAlmostEqual(vector.z, 4, places=4)
+        self.assertEqual(vector.w, 0)
+
+
     def test_4d_vector(self):
         vector = Vector(3, 4, 4, 4)
         self.assertEqual(vector, (3, 4, 4, 4))
@@ -47,6 +64,15 @@ class TestVector(TestCase):
         self.assertAlmostEqual(vector.angles[0], self.angle_345)
         self.assertAlmostEqual(vector.angles[1], self.angle_345)
         self.assertAlmostEqual(vector.angles[2], self.angle_345)
+
+
+    def test_4d_from_angle(self):
+        angle_345 = self.angle_345
+        vector = Vector.from_angles(7.5498, angle_345, angle_345, angle_345)
+        self.assertAlmostEqual(vector.x, 3, places=4)
+        self.assertAlmostEqual(vector.y, 4, places=4)
+        self.assertAlmostEqual(vector.z, 4, places=4)
+        self.assertAlmostEqual(vector.w, 4, places=4)
 
 
     def test_abs(self):

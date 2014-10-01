@@ -11,7 +11,7 @@ class Vector(namedtuple('Vector', 'x y z w')):
 
     #---------------------------------------------------------------
     @property
-    def magnitude(self):
+    def magnitude(self) -> float:
         mag = math.sqrt(pow(self.x, 2) + pow(self.y, 2))
         mag = math.sqrt(pow(mag, 2) + pow(self.z, 2))
         return math.sqrt(pow(mag, 2) + pow(self.w, 2))
@@ -33,6 +33,29 @@ class Vector(namedtuple('Vector', 'x y z w')):
         angles.append(math.asin(sin))
 
         return tuple(angles)
+
+
+    #---------------------------------------------------------------
+    @classmethod
+    def from_angles(cls, magnitude, *angles) -> namedtuple:
+        angles += (0, 0, 0)
+        x = math.cos(angles[0])
+        y = math.sin(angles[0])
+
+        ax = math.cos(angles[1])
+        z = math.sin(angles[1])
+        y = y * ax / x
+        x = ax
+
+        ax = math.cos(angles[2])
+        w = math.sin(angles[2])
+        z = z * ax / x
+        y = y * ax / x
+        x = ax
+
+        vector = cls(x, y, z, w)
+        mag = vector.magnitude
+        return vector * magnitude / mag
 
 
     #---------------------------------------------------------------
