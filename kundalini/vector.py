@@ -12,27 +12,31 @@ class Vector(namedtuple('Vector', 'x y z w')):
     #---------------------------------------------------------------
     @property
     def magnitude(self) -> float:
-        mag = math.sqrt(pow(self.x, 2) + pow(self.y, 2))
-        mag = math.sqrt(pow(mag, 2) + pow(self.z, 2))
-        return math.sqrt(pow(mag, 2) + pow(self.w, 2))
+        if not hasattr(self, '_maginitude'):
+            mag = math.sqrt(pow(self.x, 2) + pow(self.y, 2))
+            mag = math.sqrt(pow(mag, 2) + pow(self.z, 2))
+            self._magnitude = math.sqrt(pow(mag, 2) + pow(self.w, 2))
+        return self._magnitude
 
 
     #---------------------------------------------------------------
     @property
     def angles(self) -> tuple:
-        mag = math.sqrt(pow(self.x, 2) + pow(self.y, 2))
-        sin = self.y / mag
-        angles = [math.asin(sin)]
+        if not hasattr(self, '_angles'):
+            mag = math.sqrt(pow(self.x, 2) + pow(self.y, 2))
+            sin = self.y / mag
+            angles = [math.asin(sin)]
 
-        mag = math.sqrt(pow(self.x, 2) + pow(self.z, 2))
-        sin = self.z / mag
-        angles.append(math.asin(sin))
+            mag = math.sqrt(pow(self.x, 2) + pow(self.z, 2))
+            sin = self.z / mag
+            angles.append(math.asin(sin))
 
-        mag = math.sqrt(pow(self.x, 2) + pow(self.w, 2))
-        sin = self.w / mag
-        angles.append(math.asin(sin))
+            mag = math.sqrt(pow(self.x, 2) + pow(self.w, 2))
+            sin = self.w / mag
+            angles.append(math.asin(sin))
 
-        return tuple(map(math.degrees, angles))
+            self._angles = tuple(map(math.degrees, angles))
+        return self._angles
 
 
     #---------------------------------------------------------------
