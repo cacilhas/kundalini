@@ -21,6 +21,12 @@ class Vector(namedtuple('Vector', 'x y z w')):
 
     #---------------------------------------------------------------
     @property
+    def angle(self) -> tuple:
+        return self.angles[0]
+
+
+    #---------------------------------------------------------------
+    @property
     def angles(self) -> tuple:
         if not hasattr(self, '_angles'):
             mag = math.sqrt(pow(self.x, 2) + pow(self.y, 2))
@@ -41,22 +47,23 @@ class Vector(namedtuple('Vector', 'x y z w')):
 
     #---------------------------------------------------------------
     @classmethod
-    def from_angles(cls, magnitude, *angles) -> namedtuple:
+    def from_angle(cls, angle:tuple, *, magnitude:float=1.) -> namedtuple:
+        return cls.from_angles((angle, ), magnitude=magnitude)
+
+
+    #---------------------------------------------------------------
+    @classmethod
+    def from_angles(cls, angles:tuple, *, magnitude:float=1.) -> namedtuple:
         angles += (0, 0, 0)
         angles = tuple(map(math.radians, angles[:3]))
         x = math.cos(angles[0])
         y = math.sin(angles[0])
 
         ax = math.cos(angles[1])
-        z = math.sin(angles[1])
-        y = y * ax / x
-        x = ax
+        z = math.sin(angles[1]) * x / ax
 
         ax = math.cos(angles[2])
-        w = math.sin(angles[2])
-        z = z * ax / x
-        y = y * ax / x
-        x = ax
+        w = math.sin(angles[2]) * x /ax
 
         vector = cls(x, y, z, w)
         mag = vector.magnitude
