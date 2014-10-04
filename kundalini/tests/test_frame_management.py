@@ -107,6 +107,22 @@ class TestFrameManager(TestCase):
 
     @patch('kundalini.frame_management.pygame')
     @patch('kundalini.frame_management.asyncio')
+    def test_splash(self, asyncio:Mock, pygame:Mock):
+        loop = asyncio.get_event_loop.return_value
+        clock = pygame.time.Clock.return_value
+
+        class Game(FrameManager):
+            build_screen = lambda self: Mock()
+            splash = Mock()
+            load = Mock()
+
+        game = Game()
+        game.init()
+        game.splash.assert_called_once_with()
+
+
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.asyncio')
     def test_start(self, asyncio:Mock, pygame:Mock):
         loop = asyncio.get_event_loop.return_value
 

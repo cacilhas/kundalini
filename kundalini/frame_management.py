@@ -46,6 +46,9 @@ class FrameManager(metaclass=ABCMeta):
         pass
 
 
+    splash = None
+
+
     #---------------------------------------------------------------
     # API
     #
@@ -60,8 +63,13 @@ class FrameManager(metaclass=ABCMeta):
     def init(self) -> None:
         pygame.init()
         loop = self.loop = asyncio.get_event_loop()
-        self.screen # grant video mode has been set
+        if self.splash:
+            self.splash()
+        else:
+            # grant video mode has been set
+            self.screen
         self.load()
+
         loop.call_soon(self._event_callback)
         loop.call_soon(self._update_callback, Clock())
         loop.call_soon(self._draw_callback)
