@@ -1,4 +1,5 @@
 import sys
+from inspect import isgenerator, isgeneratorfunction
 import traceback
 from abc import ABCMeta, abstractmethod
 import asyncio
@@ -9,6 +10,7 @@ __all__ = ['FrameManager']
 
 EventLoop = asyncio.base_events.BaseEventLoop
 Event = pygame.event.Event
+Future = asyncio.Future
 Surface = pygame.surface.Surface
 Clock = pygame.time.Clock
 
@@ -63,12 +65,31 @@ class FrameManager(metaclass=ABCMeta):
     def init(self) -> None:
         pygame.init()
         loop = self.loop = asyncio.get_event_loop()
-        if self.splash:
+
+        if isgeneratorfunction(self.splash) and isgeneratorfunction(self.load):
+            loop.run_until_complete(
+                asyncio.wait([self.splash(), self.load()]),
+            )
+
+        elif isgeneratorfunction(self.splash):
+            loop.run_until_complete(self.splash())
+            self.load()
+
+        elif self.splash and isgeneratorfunction(self.load):
             self.splash()
-        else:
-            # grant video mode has been set
+            loop.run_until_complete(self.load())
+
+        elif self.splash:
+            self.splash()
+            self.load()
+
+        elif isgenerator(self.load):
             self.screen
-        self.load()
+            loop.run_until_complete(self.load())
+
+        else:
+            self.screen
+            self.load()
 
         loop.call_soon(self._event_callback)
         loop.call_soon(self._update_callback, Clock())
