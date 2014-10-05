@@ -73,19 +73,16 @@ class FrameManager(metaclass=ABCMeta):
                 )
 
             elif isgeneratorfunction(self.splash):
-                pygame.display.init()
                 loop.run_until_complete(self.splash())
                 pygame.init()
                 self.load()
 
             elif isgeneratorfunction(self.load):
-                pygame.display.init()
                 self.splash()
                 pygame.init()
                 loop.run_until_complete(self.load())
 
             else:
-                pygame.display.init()
                 self.splash()
                 pygame.init()
                 self.load()
