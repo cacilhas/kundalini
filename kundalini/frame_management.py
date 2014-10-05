@@ -1,5 +1,5 @@
 import sys
-from inspect import isgenerator, isgeneratorfunction
+from inspect import isgeneratorfunction
 import traceback
 from abc import ABCMeta, abstractmethod
 import asyncio
@@ -63,33 +63,42 @@ class FrameManager(metaclass=ABCMeta):
 
 
     def init(self) -> None:
-        pygame.init()
         loop = self.loop = asyncio.get_event_loop()
 
-        if isgeneratorfunction(self.splash) and isgeneratorfunction(self.load):
-            loop.run_until_complete(
-                asyncio.wait([self.splash(), self.load()]),
-            )
+        if self.splash:
+            if isgeneratorfunction(self.splash) and isgeneratorfunction(self.load):
+                pygame.init()
+                loop.run_until_complete(
+                    asyncio.wait([self.splash(), self.load()]),
+                )
 
-        elif isgeneratorfunction(self.splash):
-            loop.run_until_complete(self.splash())
-            self.load()
+            elif isgeneratorfunction(self.splash):
+                pygame.display.init()
+                loop.run_until_complete(self.splash())
+                pygame.init()
+                self.load()
 
-        elif self.splash and isgeneratorfunction(self.load):
-            self.splash()
-            loop.run_until_complete(self.load())
+            elif isgeneratorfunction(self.load):
+                pygame.display.init()
+                self.splash()
+                pygame.init()
+                loop.run_until_complete(self.load())
 
-        elif self.splash:
-            self.splash()
-            self.load()
-
-        elif isgenerator(self.load):
-            self.screen
-            loop.run_until_complete(self.load())
+            else:
+                pygame.display.init()
+                self.splash()
+                pygame.init()
+                self.load()
 
         else:
+            pygame.init()
             self.screen
-            self.load()
+
+            if isgeneratorfunction(self.load):
+                loop.run_until_complete(self.load())
+
+            else:
+                self.load()
 
         loop.call_soon(self._event_callback)
         loop.call_soon(self._update_callback, Clock())
