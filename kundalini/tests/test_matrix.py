@@ -1,6 +1,6 @@
 from unittest import TestCase, skip
 from kundalini import Vector
-from kundalini.gl import Matrix
+from kundalini.matrix import Matrix
 
 __all__ = ['TestMatrix']
 
