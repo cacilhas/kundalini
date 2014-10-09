@@ -48,6 +48,10 @@ class FrameManager(metaclass=ABCMeta):
         pass
 
 
+    def quit(self) -> None:
+        sys.exit()
+
+
     splash = None
 
 
@@ -108,6 +112,7 @@ class FrameManager(metaclass=ABCMeta):
             loop.run_forever()
         finally:
             loop.close()
+            pygame.quit()
 
 
     def reset_screen(self, screen:Surface=None) -> None:
@@ -128,7 +133,7 @@ class FrameManager(metaclass=ABCMeta):
     def _event_callback(self) -> None:
         for event in pygame.event.get():
             if event.type == QUIT:
-                sys.exit()
+                self.quit()
             else:
                 try:
                     self.handle_event(event)
