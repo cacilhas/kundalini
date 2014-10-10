@@ -330,10 +330,14 @@ class TestFrameManager(TestCase):
         with patch.object(Game, 'draw') as draw:
             game = Game()
             game.loop = Mock()
+            handle = game.loop.call_later.return_value
             draw.side_effect = ValueError
             game._draw_callback()
             draw.assert_called_once_with()
             self.assertFalse(pygame.display.update.called)
             self.assertFalse(pygame.display.flip.called)
-            self.assertFalse(game.loop.call_later.print_exc.called)
+            game.loop.call_later.assert_called_once_with(
+                pow(60, -1), game._draw_callback,
+            )
             traceback.print_exc.assert_called_once_with()
+            handle.cancel.assert_called_once_with()
