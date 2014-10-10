@@ -293,7 +293,7 @@ class TestFrameManager(TestCase):
             self.assertFalse(traceback.print_exc.called)
             clock.tick.assert_called_with()
             game.loop.call_later.assert_called_once_with(
-                pow(60, -1), game._draw_callback,
+                pow(60, -1), game._draw_callback, clock,
             )
 
 
@@ -319,7 +319,7 @@ class TestFrameManager(TestCase):
             self.assertFalse(traceback.print_exc.called)
             clock.tick.assert_called_with()
             game.loop.call_later.assert_called_once_with(
-                pow(60, -1), game._draw_callback,
+                pow(60, -1), game._draw_callback, clock,
             )
 
 
@@ -345,7 +345,7 @@ class TestFrameManager(TestCase):
             self.assertFalse(traceback.print_exc.called)
             clock.tick.assert_called_with()
             game.loop.call_later.assert_called_once_with(
-                0., game._draw_callback,
+                0., game._draw_callback, clock,
             )
 
 

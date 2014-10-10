@@ -170,4 +170,4 @@ class FrameManager(metaclass=ABCMeta):
         else:
             delay = self.MSPF - clock.tick()
             delay = 0 if delay <= 0 else delay
-            self.loop.call_later(delay / 1000, self._draw_callback)
+            self.loop.call_later(delay / 1000, self._draw_callback, clock)
