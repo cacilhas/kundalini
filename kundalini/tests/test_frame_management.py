@@ -101,7 +101,7 @@ class TestFrameManager(TestCase):
         loop.call_soon.assert_calls_has([
             call(game._event_callback),
             call(game._update_callback, clock),
-            call(game._draw_callback),
+            call(game._draw_callback, clock),
         ], any_order=True)
 
 
@@ -277,6 +277,8 @@ class TestFrameManager(TestCase):
     def test_draw_callback(self, traceback:Mock, pygame:Mock):
         screen = Mock()
         screen.get_flags.return_value = 0
+        clock = Mock()
+        clock.tick.return_value = 0
 
         class Game(FrameManager):
             build_screen = lambda self: screen
@@ -284,11 +286,12 @@ class TestFrameManager(TestCase):
         with patch.object(Game, 'draw') as draw:
             game = Game()
             game.loop = Mock()
-            game._draw_callback()
+            game._draw_callback(clock)
             draw.assert_called_once_with()
             pygame.display.update.assert_called_once_with()
             self.assertFalse(pygame.display.flip.called)
             self.assertFalse(traceback.print_exc.called)
+            clock.tick.assert_called_with()
             game.loop.call_later.assert_called_once_with(
                 pow(60, -1), game._draw_callback,
             )
@@ -300,6 +303,8 @@ class TestFrameManager(TestCase):
     def test_draw_doublebuf(self, traceback:Mock, pygame:Mock):
         screen = Mock()
         screen.get_flags.return_value = DOUBLEBUF
+        clock = Mock()
+        clock.tick.return_value = 0
 
         class Game(FrameManager):
             build_screen = lambda self: screen
@@ -307,13 +312,40 @@ class TestFrameManager(TestCase):
         with patch.object(Game, 'draw') as draw:
             game = Game()
             game.loop = Mock()
-            game._draw_callback()
+            game._draw_callback(clock)
             draw.assert_called_once_with()
             pygame.display.flip.assert_called_once_with()
             self.assertFalse(pygame.display.update.called)
             self.assertFalse(traceback.print_exc.called)
+            clock.tick.assert_called_with()
             game.loop.call_later.assert_called_once_with(
                 pow(60, -1), game._draw_callback,
+            )
+
+
+    @patch('kundalini.frame_management.asyncio', Mock())
+    @patch('kundalini.frame_management.pygame')
+    @patch('kundalini.frame_management.traceback')
+    def test_draw_tick(self, traceback:Mock, pygame:Mock):
+        screen = Mock()
+        screen.get_flags.return_value = 0
+        clock = Mock()
+        clock.tick.return_value = 1000 / 60
+
+        class Game(FrameManager):
+            build_screen = lambda self: screen
+
+        with patch.object(Game, 'draw') as draw:
+            game = Game()
+            game.loop = Mock()
+            game._draw_callback(clock)
+            draw.assert_called_once_with()
+            pygame.display.update.assert_called_once_with()
+            self.assertFalse(pygame.display.flip.called)
+            self.assertFalse(traceback.print_exc.called)
+            clock.tick.assert_called_with()
+            game.loop.call_later.assert_called_once_with(
+                0., game._draw_callback,
             )
 
 
@@ -323,6 +355,7 @@ class TestFrameManager(TestCase):
     def test_draw_exception(self, traceback:Mock, pygame:Mock):
         screen = Mock()
         screen.get_flags.return_value = 0
+        clock = Mock()
 
         class Game(FrameManager):
             build_screen = lambda self: screen
@@ -332,12 +365,9 @@ class TestFrameManager(TestCase):
             game.loop = Mock()
             handle = game.loop.call_later.return_value
             draw.side_effect = ValueError
-            game._draw_callback()
+            game._draw_callback(clock)
             draw.assert_called_once_with()
             self.assertFalse(pygame.display.update.called)
             self.assertFalse(pygame.display.flip.called)
-            game.loop.call_later.assert_called_once_with(
-                pow(60, -1), game._draw_callback,
-            )
+            self.assertFalse(game.loop.call_later.called)
             traceback.print_exc.assert_called_once_with()
-            handle.cancel.assert_called_once_with()

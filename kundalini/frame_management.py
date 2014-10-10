@@ -19,7 +19,7 @@ Clock = pygame.time.Clock
 class FrameManager(metaclass=ABCMeta):
 
     DELAY = pow(2, -10)
-    FPS = pow(60, -1)
+    MSPF = 1000 / 60 # 60fps ~ 16.67ms / frame
     __screen = None
 
 
@@ -103,7 +103,7 @@ class FrameManager(metaclass=ABCMeta):
 
         loop.call_soon(self._event_callback)
         loop.call_soon(self._update_callback, Clock())
-        loop.call_soon(self._draw_callback)
+        loop.call_soon(self._draw_callback, Clock())
 
 
     def start(self) -> None:
@@ -155,8 +155,8 @@ class FrameManager(metaclass=ABCMeta):
             self.loop.call_later(self.DELAY, self._update_callback, clock)
 
 
-    def _draw_callback(self) -> None:
-        handle = self.loop.call_later(self.FPS, self._draw_callback)
+    def _draw_callback(self, clock:Clock) -> None:
+        clock.tick()
         try:
             self.draw()
             if self.screen.get_flags() & DOUBLEBUF:
@@ -166,4 +166,8 @@ class FrameManager(metaclass=ABCMeta):
 
         except:
             traceback.print_exc()
-            handle.cancel()
+
+        else:
+            delay = self.MSPF - clock.tick()
+            delay = 0 if delay <= 0 else delay
+            self.loop.call_later(delay / 1000, self._draw_callback)
